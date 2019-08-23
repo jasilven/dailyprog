@@ -1,5 +1,5 @@
 (ns ^{:doc "https://www.reddit.com/r/dailyprogrammer/comments/cmd1hb/20190805_challenge_380_easy_smooshed_morse_code_1/"}
-    ch-380
+    p380
   (:require [clojure.string :as str]
             [clojure.test :as t]
             [clojure.java.io :as io]
@@ -27,29 +27,23 @@
                               [(smorse word) word ]))))
 
 (defn bonus1 [codes cnt]
-  (->> codes
-       (filter #(= cnt (count (second %))))
-       ffirst))
+  (->> codes (filter #(= cnt (count (second %)))) ffirst))
+
+(defn f-sec-f [x]
+  (-> x first second first))
 
 (defn bonus2 [codes s]
-  (->> codes
-       (filter #(str/includes? (first %) s))
-       first
-       second
-       first))
+  (->> codes (filter #(str/includes? (first %) s)) f-sec-f))
 
 (defn bonus3 [codes len]
   (->> codes
        (filter #(= (count (filter (fn [s] (= \- s)) (first %)))
                    (count (filter (fn [s] (= \. s)) (first %)))))
        (filter #(some (fn [word] (= len (.length word))) (second %)))
-       first
-       second
-       first))
+       f-sec-f))
 
 (defn palindrome? [s]
   (= s (str/reverse s)))
-
 (defn bonus4 [codes len]
   (->> codes
        (filter #(palindrome? (first %)))
@@ -67,15 +61,11 @@
 
 (defn solve []
   (let [codes (parse-input path)
-        b1 (future (bonus1 codes 13))
-        b2 (future (bonus2 codes "---------------"))
-        b3 (future (bonus3 codes 21))
-        b4 (future (bonus4 codes 13))
         b5 (future (bonus5 codes "--.---.---.--"))]
-    (println "Bonus 1:" @b1)
-    (println "Bonus 2:" @b2)
-    (println "Bonus 3:" @b3)
-    (println "Bonus 4:" @b4)
+    (println "Bonus 1:" (bonus1 codes 13))
+    (println "Bonus 2:" (bonus2 codes "---------------"))
+    (println "Bonus 3:" (bonus3 codes 21))
+    (println "Bonus 4:" (bonus4 codes 13))
     (println "Bonus 5:" @b5)))
 
 (defn -main []

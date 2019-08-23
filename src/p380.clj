@@ -44,6 +44,7 @@
 
 (defn palindrome? [s]
   (= s (str/reverse s)))
+
 (defn bonus4 [codes len]
   (->> codes
        (filter #(palindrome? (first %)))

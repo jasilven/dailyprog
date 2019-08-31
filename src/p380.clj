@@ -1,4 +1,5 @@
-(ns ^{:doc "https://www.reddit.com/r/dailyprogrammer/comments/cmd1hb/20190805_challenge_380_easy_smooshed_morse_code_1/"}
+(ns ^{:doc "Smooshed Morse Code 1
+https://www.reddit.com/r/dailyprogrammer/comments/cmd1hb/20190805_challenge_380_easy_smooshed_morse_code_1/"}
     p380
   (:require [clojure.string :as str]
             [clojure.test :as t]

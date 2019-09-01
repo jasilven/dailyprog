@@ -14,32 +14,24 @@ https://www.reddit.com/r/dailyprogrammer/comments/ab9mn7/20181231_challenge_371_
 (defn in-board? [[x y] size]
   (and (>= x 0) (>= y 0) (< x size) (< y size)))
 
-(defn ne-xys [xy size]
-  (->> (iterate #(mapv inc %) xy)
-       (take-while #(in-board? % size))))
-
-(defn sw-xys [xy size]
-  (->> (iterate #(mapv dec %) xy)
-       (take-while #(in-board? % size))))
-
-(defn nw-xys [xy size]
-  (->> (iterate (fn [[x y]] (vector (dec x) (inc y))) xy)
-       (take-while #(in-board? % size))))
-
-(defn se-xys [xy size]
-  (->> (iterate (fn [[x y]] (vector (inc x) (dec y))) xy)
-       (take-while #(in-board? % size))))
-
 (defn uniq-rows?
-  "Returns true if every queen is in unique row and false otherwise."
+  "Return true if every queen is in unique row and false otherwise."
   [queens]
   (->> queens (map second) (into #{}) count (= (count queens))))
 
-(defn diagonals [xy size]
-  (->> (concat (ne-xys xy size)
-               (sw-xys xy size)
-               (nw-xys xy size)
-               (se-xys xy size))
+(defn diagonal
+  "Return seq of positions [x y] iterating positions with iterate-fn starting at xy"
+  [xy size iterate-fn]
+  (->> (iterate iterate-fn xy)
+       (take-while #(in-board? % size))))
+
+(defn diagonals
+  "Return set of all diagonal (ne/se/sw/nw) coords for position xy including xy itself."
+  [xy size]
+  (->> (concat (diagonal xy size #(mapv inc %))
+               (diagonal xy size #(mapv dec %))
+               (diagonal xy size (fn [[x y]] (vector (dec x) (inc y))))
+               (diagonal xy size (fn [[x y]] (vector (inc x) (dec y)))))
        (into #{})))
 
 (defn uniq-diagonals?
@@ -56,6 +48,14 @@ https://www.reddit.com/r/dailyprogrammer/comments/ab9mn7/20181231_challenge_371_
   (let [queen-xys (into #{} (enumerate queen-rows))]
     (and (uniq-rows? queen-xys)
          (uniq-diagonals? queen-xys))))
+
+(defn -main []
+  (println "(qcheck [2 4 6 1 3 5]) =>" (qcheck [2 4 6 1 3 5]))
+  (println "(qcheck [4 2 7 3 6 8 5 1]) =>" (qcheck [4 2 7 3 6 8 5 1]))
+  (println "(qcheck [2 5 7 4 1 8 6 3]) =>" (qcheck [2 5 7 4 1 8 6 3]))
+  (println "(qcheck [5 3 1 4 2 8 6 3]) =>" (qcheck [5 3 1 4 2 8 6 3]))
+  (println "(qcheck [5 8 2 4 7 1 3 6]) =>" (qcheck [5 8 2 4 7 1 3 6]))
+  (println "(qcheck [4 3 1 8 1 3 5 2]) =>" (qcheck [4 3 1 8 1 3 5 2])))
 
 (t/deftest check-test
   (t/testing "qcheck"
